@@ -73,9 +73,12 @@ python agent.py
 
 > 貼上程式執行的實際範例輸出
 
-```
-（貼上執行結果，例如下的指令與輸出結果）
-```
+
+<img width="523" height="62" alt="image" src="https://github.com/user-attachments/assets/c6e706e9-a667-4e6b-ab24-a945e7b9d44f" />
+<img width="1107" height="198" alt="image" src="https://github.com/user-attachments/assets/83d96398-030e-4d84-bbe5-9c6b2415fd2c" />
+
+
+
 
 ---
 
