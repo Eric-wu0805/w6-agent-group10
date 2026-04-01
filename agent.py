@@ -3,8 +3,9 @@ import sys
 import time
 import requests
 from dotenv import load_dotenv
-from duckduckgo_search import DDGS
-import google.generativeai as genai
+from ddgs import DDGS
+from google import genai
+from google.genai import types
 
 # 讀取 .env 檔案
 load_dotenv()
@@ -14,7 +15,7 @@ if not os.environ.get("GEMINI_API_KEY"):
     print("錯誤: 請在 .env 檔案中設定 GEMINI_API_KEY")
     sys.exit(1)
 
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
+client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
 
 def get_weather(city: str) -> str:
     """查詢目的地的即時溫度與天氣狀態"""
@@ -53,20 +54,88 @@ def get_advice() -> str:
     except Exception as e:
         return f"隨機建議取得錯誤: {e}"
 
+def get_travel_tips(country_name: str) -> str:
+    """根據英文國家名稱查詢旅遊注意事項，包含安全等級、當地貨幣、語言、時區與官方安全公告"""
+    try:
+        # Step 1: 透過 REST Countries API 取得國家基本資料
+        countries_url = f"https://restcountries.com/v3.1/name/{country_name}"
+        countries_resp = requests.get(countries_url, timeout=10)
+        countries_resp.raise_for_status()
+        countries_data = countries_resp.json()
+
+        if not countries_data:
+            return f"查無 {country_name} 的國家資料"
+
+        info = countries_data[0]
+        country_code = info.get("cca2", "").upper()
+
+        currencies = info.get("currencies", {})
+        currency_str = "、".join(
+            f"{v.get('name', k)} ({k})" for k, v in currencies.items()
+        ) if currencies else "未知"
+
+        languages = info.get("languages", {})
+        lang_str = "、".join(languages.values()) if languages else "未知"
+
+        timezones = info.get("timezones", ["未知"])
+        timezone_str = timezones[0] if timezones else "未知"
+
+        idd = info.get("idd", {})
+        phone_code = idd.get("root", "") + (idd.get("suffixes", [""])[0] if idd.get("suffixes") else "")
+
+        # Step 2: 透過 Travel Advisory API 取得安全公告
+        advisory_url = f"https://www.travel-advisory.info/api?countrycode={country_code}"
+        advisory_resp = requests.get(advisory_url, timeout=10)
+        advisory_resp.raise_for_status()
+        advisory_data = advisory_resp.json()
+
+        advisory_info = advisory_data.get("data", {}).get(country_code, {})
+        advisory = advisory_info.get("advisory", {})
+        score = advisory.get("score", None)
+        message = advisory.get("message", "")
+
+        if score is not None:
+            try:
+                score_float = float(score)
+                if score_float < 2.0:
+                    risk_level = f"✅ 低風險（{score}/5），適合旅遊"
+                elif score_float < 3.0:
+                    risk_level = f"⚠️ 中低風險（{score}/5），一般注意即可"
+                elif score_float < 4.0:
+                    risk_level = f"⚠️ 中高風險（{score}/5），請隨時保持警覺"
+                else:
+                    risk_level = f"🚫 高風險（{score}/5），非必要請勿前往"
+            except (ValueError, TypeError):
+                risk_level = "風險等級未知"
+        else:
+            risk_level = "風險等級資料不足"
+
+        advisory_text = message.strip() if message.strip() else "目前無特別安全公告"
+
+        return (
+            f"[安全等級] {risk_level}\n"
+            f"[當地貨幣] {currency_str}\n"
+            f"[通用語言] {lang_str}\n"
+            f"[主要時區] {timezone_str}\n"
+            f"[國際電話] {phone_code if phone_code else '未知'}\n"
+            f"[安全公告] {advisory_text}"
+        )
+    except requests.exceptions.HTTPError:
+        return f"查無 {country_name} 的資料，請使用英文國家名稱（如 Japan、France）"
+    except Exception as e:
+        return f"旅遊注意事項查詢錯誤：{e}"
+
 def generate_travel_brief(city: str):
     print(f"正在透過 Agent 產生 {city} 的行前簡報...\n")
-    print("為避免觸發免費 API 頻率限制，程式暫停 37 秒等待配額恢復...")
-    time.sleep(37)
-    
-    # 初始化 Gemini Model 並將函數當作工具傳入
-    model = genai.GenerativeModel(
-        model_name='gemini-2.5-flash',
-        tools=[get_weather, search_places, get_advice],
-        system_instruction="""你是一個「旅遊前哨站」AI Agent。
+    print("為避免觸發免費 API 頻率限制，程式暫停 5 秒等待配額恢復...")
+    time.sleep(5)
+
+    system_prompt = """你是一個「旅遊前哨站」AI Agent。
 請利用提供的 Tools，依序查詢使用者的目的地：
-1. 即時天氣
-2. 熱門景點
-3. 取得一則隨機的人生建議（需翻譯為繁體中文）
+1. 即時天氣（呼叫 get_weather，傳入城市名稱）
+2. 熱門景點（呼叫 search_places，傳入城市名稱）
+3. 取得一則隨機的人生建議（呼叫 get_advice，需翻譯為繁體中文）
+4. 旅遊注意事項（呼叫 get_travel_tips，傳入該城市所屬的英文國家名稱，例如東京→Japan、台北→Taiwan）
 
 最後，請【嚴格】遵守以下格式輸出「行前簡報」（不要加上 Markdown 的程式碼區塊符號，直接輸出純文字即可）：
 
@@ -76,14 +145,21 @@ def generate_travel_brief(city: str):
 
 [景點]  (帶入景點清單)
 
-[提醒]  (帶入提醒與翻譯後的格言)"""
+[提醒]  (帶入提醒與翻譯後的格言)
+
+[注意事項]
+(依序帶入 get_travel_tips 回傳的安全等級、當地貨幣、語言、時區、電話國碼與安全公告，每項各佔一行)"""
+
+    chat = client.chats.create(
+        model="gemini-3.1-flash-lite-preview",
+        config=types.GenerateContentConfig(
+            system_instruction=system_prompt,
+            tools=[get_weather, search_places, get_advice, get_travel_tips],
+        ),
     )
 
-    # 啟用自動調用函數的聊天模式
-    chat = model.start_chat(enable_automatic_function_calling=True)
-    
     prompt = f"請幫我產出一份 {city} 的行前簡報"
-    
+
     try:
         response = chat.send_message(prompt)
         print("\n\n" + "-"*40 + "\n")

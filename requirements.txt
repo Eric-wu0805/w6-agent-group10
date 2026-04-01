@@ -1,5 +1,5 @@
 # project requirements
 requests
-duckduckgo-search
+ddgs
 python-dotenv
-google-generativeai
+google-genai
