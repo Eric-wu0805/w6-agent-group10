@@ -126,7 +126,7 @@ SEARCH_ATTRACTIONS_TOOL = {
 }
 ```
 
-### [功能名稱]（負責：查詢即時天氣）
+### [查詢即時天氣]（負責：吳宸宇）
 
 - **Tool 名稱**：`get_weather`
 - **使用 API**：`https://wttr.in/{city}?format=j1`
