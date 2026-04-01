@@ -36,16 +36,18 @@
 
 ```
 ├── tools/
-│   ├── xxx_tool.py   
-│   ├── xxx_tool.py   
-│   └── xxx_tool.py  
+│   ├── get_advice.py       # 呼叫 API 取得每日隨機格言 / 生活建議
+│   ├── get_weather.py      # 查詢目的地的即時天氣與溫度
+│   └── search_places.py    # 使用 DuckDuckGo 搜尋當地的熱門景點
 ├── skills/
-│   └── xxx_skill.py  
-├── main.py        
-├── requirements.txt
-└── README.md
+│   └── travel_outpost/
+│       └── SKILL.md        # 定義 Agent 行為、呼叫邏輯與報告輸出格式的技能指令
+├── agent.py                # 專案主程式 (AI Agent 核心思考邏輯)
+├── requirements.txt        # 專案相依套件清單
+├── .env                    # 本機環境變數 (存放您的 API Key，不被 commit)
+├── .gitignore              # Git 忽略清單 (確保安全與乾淨)
+└── README.md               # 您現在正在看的說明文件
 ```
-
 ---
 
 ## 使用方式
