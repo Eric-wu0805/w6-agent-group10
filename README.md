@@ -14,7 +14,7 @@
 | （例：天氣） | 呼叫 weather_tool，查詢即時天氣        | 吳宸宇         |
 | （例：景點） | 呼叫 search_tool，搜尋熱門景點         |   林富閎       |
 | （例：建議） | 呼叫 advice_tool，取得隨機建議         | 張承新         |
-| （例：出發） | 執行 trip_briefing Skill，產出行前簡報 |          |
+| （例：出發） | 執行 trip_briefing Skill，產出行前簡報 |  張承新           |
 
 ---
 
