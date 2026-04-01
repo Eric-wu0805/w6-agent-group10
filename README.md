@@ -85,7 +85,7 @@ python agent.py
 
 ## 各功能說明
 
-### [功能名稱]（負責：姓名）
+### [取得隨機建議]（負責：張承新）
 
 - **Tool 名稱**： advice_tool
 - **使用 API**： Advice Slip JSON API (或是內建的隨機語錄庫)
