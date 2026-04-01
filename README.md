@@ -126,12 +126,29 @@ SEARCH_ATTRACTIONS_TOOL = {
 }
 ```
 
-### [功能名稱]（負責：姓名）
+### [功能名稱]（負責：查詢即時天氣）
 
-- **Tool 名稱**：
-- **使用 API**：
-- **輸入**：
-- **輸出範例**：
+- **Tool 名稱**：`get_weather`
+- **使用 API**：`https://wttr.in/{city}?format=j1`
+- **輸入**：`city` (字串格式，目標城市名稱)
+- **輸出範例**：`18°C，Clear` 或 `22°C，Partly cloudy`
+
+```python
+TOOL = {
+    "name": "get_weather",
+    "description": "查詢目的地的即時溫度與天氣狀態",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "city": {
+                "type": "string",
+                "description": "要查詢即時天氣的城市名稱，例如：'Tokyo'"
+            }
+        },
+        "required": ["city"]
+    }
+}
+```
 
 ### Skill：[Skill 名稱]（負責：姓名）
 
