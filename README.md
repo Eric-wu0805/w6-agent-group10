@@ -14,7 +14,8 @@
 | （例：天氣） | 呼叫 weather_tool，查詢即時天氣        | 吳宸宇         |
 | （例：景點） | 呼叫 search_tool，搜尋熱門景點         |   林富閎       |
 | （例：建議） | 呼叫 advice_tool，取得隨機建議         | 張承新         |
-| （例：出發） | 執行 trip_briefing Skill，產出行前簡報 |  張承新           |
+| （例：旅遊注意） | 呼叫 travel_tips_tool，查詢安全公告與實用資訊 | 張承新 |
+| （例：出發） | 執行 trip_briefing Skill，產出行前簡報 | 張承新 |
 
 ---
 
@@ -23,11 +24,12 @@
 
 | 姓名 | 負責功能     | 檔案        | 使用的 API |
 | ---- | ------------ | ----------- | ---------- |
-| 吳宸宇 | 查詢即時天氣     | `tools/get_weather`  |https://wttr.in/{city}?format=j1            |
-|林富閎 | 搜尋熱門景點  | `search_attractions_tools/`  | pip install duckduckgo-search      |
-| 張承新     | 給建議             | `tools/get_advice`  |   https://api.adviceslip.com/advice         |
-|張承新       | Skill 整合   | `skills/` | —         |
-| 吳宸宇     | Agent 主程式 | `main.py` | —         |
+| 吳宸宇 | 查詢即時天氣 | `tools/get_weather.py` | https://wttr.in/{city}?format=j1 |
+| 林富閎 | 搜尋熱門景點 | `tools/search_places.py` | DuckDuckGo Search API |
+| 張承新 | 給建議 | 	ools/get_advice.py | https://api.adviceslip.com/advice |
+| 張承新 | 旅遊注意事項 | 	ools/get_travel_tips.py | REST Countries API + Travel Advisory API |
+| 林富閎 | Skill 整合 | `skills/` | — |
+| 吳宸宇 | Agent 主程式 | `agent.py` | — |
 
 ---
 
@@ -38,6 +40,7 @@
 ├── tools/
 │   ├── get_advice.py       # 呼叫 API 取得每日隨機格言 / 生活建議
 │   ├── get_weather.py      # 查詢目的地的即時天氣與溫度
+│   ├── get_travel_tips.py  # 查詢旅遊安全等級、貨幣、語言、時區與安全公告
 │   └── search_places.py    # 使用 DuckDuckGo 搜尋當地的熱門景點
 ├── skills/
 │   └── travel_outpost/
@@ -90,12 +93,12 @@ python agent.py
 - **Tool 名稱**： advice_tool
 - **使用 API**： Advice Slip JSON API (或是內建的隨機語錄庫)
 - **輸入**： query (可選的主題或關鍵字)
-- **輸出範例：**
+- **輸出範例**：
 
 ```python
 ADVICE_TOOL = {
     "name": "advice_tool",
-    "description": "取得一句隨機的生活建議、名言或心靈雞湯。當使用者感到迷惘、遇到困難需要他人建議，或是單純想要聽一些有智慧的中肯語錄時，請呼叫此工具。",
+    "description": "取得一句隨機的生活建議、名言或心靈雞湯。當使用者感到迷惘、遇到困難需要他人建議，或是單純想要聽一些有智慧的中肃語錄時，請呼叫此工具。",
     "parameters": {
         "type": "object",
         "properties": {
@@ -107,7 +110,6 @@ ADVICE_TOOL = {
         "required": []
     }
 }
-
 ```
 
 ### [搜尋熱門景點]（負責：林富閎）
@@ -164,17 +166,54 @@ TOOL = {
 }
 ```
 
+### [旅遊注意事項]（負責：張承新）
+
+- **Tool 名稱**：`get_travel_tips`
+- **使用 API**：
+  - `https://restcountries.com/v3.1/name/{country}` — 取得建幣、語言、時區、電話國碼
+  - `https://www.travel-advisory.info/api?countrycode={code}` — 官方旅遡安全公告與風險評分
+- **輸入**：`country_name` (英文國家名稱，例如：`Japan`、`France`)
+- **輸出範例**：
+```
+[安全等級] ✅ 低風險（1.5/5），適合旅遊
+[當地貨幣] Japanese Yen (JPY)
+[通用語言] Japanese
+[主要時區] UTC+09:00
+[國際電話] +81
+[安全公告] Exercise normal security precautions.
+```
+
+```python
+TOOL = {
+    "name": "get_travel_tips",
+    "description": "根據英文國家名稱查詢旅遊注意事項，包含安全等級、貨幣、語言、時區與官方安全公告",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "country_name": {
+                "type": "string",
+                "description": "英文國家名稱，例如：'Japan'、'France'、'Thailand'"
+            }
+        },
+        "required": ["country_name"]
+    }
+}
+```
+
 ### Skill：[Skill Travel Outpost]（負責：張承新）
 
-- **組合了哪些 Tool**：`get_weather` (實時天氣)、`search_places` (景點搜尋)、`get_advice` (每日格言)
+- **組合了哪些 Tool**：`get_weather` (實時天氣)、`search_places` (景點搜尋)、`get_advice` (每日格言)、`get_travel_tips` (旅遊注意事項)
 - **執行順序**：
 
 ```text
 Step 1: 呼叫 get_weather → 取得 目標城市的實時溫度與天氣狀態
 Step 2: 呼叫 search_places → 取得 該城市的前三名熱門旅遊景點
 Step 3: 呼叫 get_advice → 取得 一則隨機的英文每日格言
-Step 4: 組合輸出 → 產生 格式嚴格統一且翻譯成中文的「行前簡報」
+Step 4: 呼叫 get_travel_tips → 取得 目的地國家的安全等級、貨幣、語言、時區與安全公告
+Step 5: 組合輸出 → 產生 格式嚴格統一且翻譯成中文的「行前簡報」
 ```
+
+---
 
 ## 心得
 
