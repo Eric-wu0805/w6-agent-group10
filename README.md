@@ -53,10 +53,17 @@
 範例：
 
 ```bash
+# 1. 建立虛擬環境
 python3 -m venv .venv
-source .venv/bin/activate
+# 2. 啟動虛擬環境
+source .venv/bin/activate  # Windows 系統請改用 .\.venv\Scripts\activate
+# 3. 安裝所需套件
 pip install -r requirements.txt
-python main.py
+# 4. 設定您的環境變數 (請在資料夾中建立 .env 檔案)
+# 並且在檔案內加入您的 API Key：
+# GEMINI_API_KEY=您的_Google_GenAI_金鑰
+# 5. 執行主程式
+python agent.py
 ```
 
 ---
