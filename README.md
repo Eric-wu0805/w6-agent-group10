@@ -126,7 +126,12 @@ Step 3: 組合輸出 → 產生 ___
 
 ### 遇到最難的問題
 
-> 寫下這次實作遇到最困難的事，以及怎麼解決的
+**最困難的事：第三方工具庫 (LangChain) 的版本相容性問題**
+在實作 Agent 的核心邏輯時，原先使用了 LangChain 的 `create_tool_calling_agent` 來將那幾個 Python 腳本封裝成 Agent 的 Tools。但因為使用者的環境中可能存在較舊版本的 LangChain，結果執行時直接丟出 `ImportError: cannot import name 'create_tool_calling_agent'`，導致 Agent 無法啟動。
+
+**如何解決的：**
+我立刻轉換思路，決定**捨棄過度複雜且版本更迭頻繁的 LangChain**，改為使用 Google 官方提供的原生命名空間套件 **`google-generativeai`** 來重構 `agent.py`。
+透過它內建的 `enable_automatic_function_calling=True` 參數，我只需建立一個普通的 Python List 將 Function 傳給模型，模型就能完美且自動地完成所有 Tool 的呼叫循環，這不僅避開了相容性地雷，程式碼結構也變得更加輕量且容易維護！
 
 ### Tool 和 Skill 的差別
 
