@@ -23,7 +23,7 @@
 | 姓名 | 負責功能     | 檔案        | 使用的 API |
 | ---- | ------------ | ----------- | ---------- |
 | 吳宸宇 | 查詢即時天氣     | `tools/`  |            |
-|林富閎 | 搜尋熱門景點  | `search_attractions_tools/`  |       |
+|林富閎 | 搜尋熱門景點  | `search_attractions_tools/`  | DuckDuckGo |
 |      |              | `tools/`  |            |
 |      | Skill 整合   | `skills/` | —         |
 |      | Agent 主程式 | `main.py` | —         |
