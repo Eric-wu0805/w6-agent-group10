@@ -20,13 +20,14 @@
 
 ## 組員與分工
 
+
 | 姓名 | 負責功能     | 檔案        | 使用的 API |
 | ---- | ------------ | ----------- | ---------- |
-| 吳宸宇 | 查詢即時天氣     | `tools/`  |            |
-|林富閎 | 搜尋熱門景點  | `search_attractions_tools/`  | DuckDuckGo |
-|      |              | `tools/`  |            |
-|      | Skill 整合   | `skills/` | —         |
-|      | Agent 主程式 | `main.py` | —         |
+| 吳宸宇 | 查詢即時天氣     | `tools/`  |https://wttr.in/{city}?format=j1            |
+|林富閎 | 搜尋熱門景點  | `search_attractions_tools/`  | DuckDuckGo Search API      |
+|      | 給建議             | `tools/get_advice`  |            |
+|林富閎      | Skill 整合   | `skills/` | —         |
+| 吳宸宇     | Agent 主程式 | `main.py` | —         |
 
 ---
 
