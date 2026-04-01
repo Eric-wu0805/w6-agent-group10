@@ -1,5 +1,6 @@
 import os
 import sys
+import time
 import requests
 from dotenv import load_dotenv
 from duckduckgo_search import DDGS
@@ -54,6 +55,8 @@ def get_advice() -> str:
 
 def generate_travel_brief(city: str):
     print(f"正在透過 Agent 產生 {city} 的行前簡報...\n")
+    print("為避免觸發免費 API 頻率限制，程式暫停 37 秒等待配額恢復...")
+    time.sleep(37)
     
     # 初始化 Gemini Model 並將函數當作工具傳入
     model = genai.GenerativeModel(
