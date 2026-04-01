@@ -87,17 +87,27 @@ python agent.py
 
 ### [功能名稱]（負責：姓名）
 
-- **Tool 名稱**：
-- **使用 API**：
-- **輸入**：
-- **輸出範例**：
+- **Tool 名稱**： advice_tool
+- **使用 API**： Advice Slip JSON API (或是內建的隨機語錄庫)
+- **輸入**： query (可選的主題或關鍵字)
+- **輸出範例：**
 
 ```python
-TOOL = {
-    "name": "",
-    "description": "",
-    "parameters": { ... }
+ADVICE_TOOL = {
+    "name": "advice_tool",
+    "description": "取得一句隨機的生活建議、名言或心靈雞湯。當使用者感到迷惘、遇到困難需要他人建議，或是單純想要聽一些有智慧的中肯語錄時，請呼叫此工具。",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "query": {
+                "type": "string",
+                "description": "(選填) 希望獲得建議的特定主題或關鍵字 (例如：'love', 'life', 'work')。若使用者未特別指定，可以留空，系統將會回傳完全隨機的建議。"
+            }
+        },
+        "required": []
+    }
 }
+
 ```
 
 ### [搜尋熱門景點]（負責：林富閎）
