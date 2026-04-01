@@ -25,7 +25,7 @@
 | ---- | ------------ | ----------- | ---------- |
 | 吳宸宇 | 查詢即時天氣     | `tools/`  |https://wttr.in/{city}?format=j1            |
 |林富閎 | 搜尋熱門景點  | `search_attractions_tools/`  | DuckDuckGo Search API      |
-| 張承新     | 給建議             | `tools/get_advice`  |            |
+| 張承新     | 給建議             | `tools/get_advice`  |   https://api.adviceslip.com/advice         |
 |林富閎      | Skill 整合   | `skills/` | —         |
 | 吳宸宇     | Agent 主程式 | `main.py` | —         |
 
@@ -154,18 +154,17 @@ TOOL = {
 }
 ```
 
-### Skill：[Skill 名稱]（負責：姓名）
+### Skill：[Skill Travel Outpost]（負責：張承新）
 
-- **組合了哪些 Tool**：
+- **組合了哪些 Tool**：`get_weather` (實時天氣)、`search_places` (景點搜尋)、`get_advice` (每日格言)
 - **執行順序**：
 
+```text
+Step 1: 呼叫 get_weather → 取得 目標城市的實時溫度與天氣狀態
+Step 2: 呼叫 search_places → 取得 該城市的前三名熱門旅遊景點
+Step 3: 呼叫 get_advice → 取得 一則隨機的英文每日格言
+Step 4: 組合輸出 → 產生 格式嚴格統一且翻譯成中文的「行前簡報」
 ```
-Step 1: 呼叫 ___ → 取得 ___
-Step 2: 呼叫 ___ → 取得 ___
-Step 3: 組合輸出 → 產生 ___
-```
-
----
 
 ## 心得
 
