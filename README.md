@@ -13,7 +13,7 @@
 | ------------ | -------------------------------------- | -------- |
 | （例：天氣） | 呼叫 weather_tool，查詢即時天氣        | 吳宸宇         |
 | （例：景點） | 呼叫 search_tool，搜尋熱門景點         |   林富閎       |
-| （例：建議） | 呼叫 advice_tool，取得隨機建議         |          |
+| （例：建議） | 呼叫 advice_tool，取得隨機建議         | 張承新         |
 | （例：出發） | 執行 trip_briefing Skill，產出行前簡報 |          |
 
 ---
@@ -25,7 +25,7 @@
 | ---- | ------------ | ----------- | ---------- |
 | 吳宸宇 | 查詢即時天氣     | `tools/`  |https://wttr.in/{city}?format=j1            |
 |林富閎 | 搜尋熱門景點  | `search_attractions_tools/`  | DuckDuckGo Search API      |
-|      | 給建議             | `tools/get_advice`  |            |
+| 張承新     | 給建議             | `tools/get_advice`  |            |
 |林富閎      | Skill 整合   | `skills/` | —         |
 | 吳宸宇     | Agent 主程式 | `main.py` | —         |
 
