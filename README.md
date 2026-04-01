@@ -96,12 +96,35 @@ TOOL = {
 }
 ```
 
-### [功能名稱]（負責：姓名）
+### [搜尋熱門景點]（負責：林富閎）
 
-- **Tool 名稱**：
-- **使用 API**：
+- **Tool 名稱**： search_attractions_tool
+- **使用 API**： DuckDuckGo Search API (或 Google Places API / Google Search API)
 - **輸入**：
+location (字串, string): 欲查詢景點的地點或城市名稱（例如："台北"、"京都"、"冰島"）。
+category (字串, string, 選填): 景點的分類或性質，預設為 "熱門景點"（其他例如："親子景點"、"室內景點"、"私房秘境" 等）。
 - **輸出範例**：
+```python
+SEARCH_ATTRACTIONS_TOOL = {
+    "name": "search_attractions_tool",
+    "description": "搜尋指定地點或城市的熱門旅遊景點、秘境或地標。當使用者詢問任何與景點推薦、必去地方或旅遊行程規劃相關的問題時，請呼叫此工具。",
+    "parameters": {
+        "type": "object",
+        "properties": {
+            "location": {
+                "type": "string",
+                "description": "欲查詢景點的地點或城市名稱，例如：'台北'、'京都'、'冰島'"
+            },
+            "query_type": {
+                "type": "string",
+                "description": "景點的分類、性質或關鍵字，例如：'熱門景點'、'親子景點'、'私房秘境'、'室內景點'。若使用者未特別指定，預設請帶入 '熱門景點'。",
+                "default": "熱門景點"
+            }
+        },
+        "required": ["location"]
+    }
+}
+```
 
 ### [功能名稱]（負責：姓名）
 
