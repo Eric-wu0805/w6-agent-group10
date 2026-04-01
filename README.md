@@ -23,7 +23,7 @@
 
 | 姓名 | 負責功能     | 檔案        | 使用的 API |
 | ---- | ------------ | ----------- | ---------- |
-| 吳宸宇 | 查詢即時天氣     | `tools/`  |https://wttr.in/{city}?format=j1            |
+| 吳宸宇 | 查詢即時天氣     | `tools/get_weather`  |https://wttr.in/{city}?format=j1            |
 |林富閎 | 搜尋熱門景點  | `search_attractions_tools/`  | pip install duckduckgo-search      |
 | 張承新     | 給建議             | `tools/get_advice`  |   https://api.adviceslip.com/advice         |
 |張承新       | Skill 整合   | `skills/` | —         |
